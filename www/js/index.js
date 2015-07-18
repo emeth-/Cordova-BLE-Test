@@ -18,6 +18,46 @@
 /* jshint browser: true , devel: true*/
 'use strict';
 
+// returns advertising data as hashmap of byte arrays keyed by type
+// advertising data is length, type, data
+// https://www.bluetooth.org/en-us/specification/assigned-numbers/generic-access-profile
+function parseAdvertisingData(bytes) {
+    var length, type, data, i = 0, advertisementData = {};
+
+    while (length !== 0) {
+
+        length = bytes[i] & 0xFF;
+        i++;
+
+        type = bytes[i] & 0xFF;
+        i++;
+
+        data = bytes.slice(i, i + length - 1); // length includes type byte, but not length byte
+        i += length - 2;  // move to end of data
+        i++;
+
+        advertisementData[type] = data;
+    }
+
+    return advertisementData;
+}
+
+// Convert ArrayBuffer to int[] for easier processing.
+// If Uint8Array.slice worked, this would be unnecessary
+var arrayBufferToIntArray = function(buffer) {
+    var result;
+
+    if (buffer) {
+        var typedArray = new Uint8Array(buffer);
+        result = [];
+        for (var i = 0; i < typedArray.length; i++) {
+            result[i] = typedArray[i];
+        }
+    }
+
+    return result;
+};
+
 var battery = {
     service: "180F",
     level: "2A19"
@@ -41,12 +81,12 @@ var app = {
     refreshDeviceList: function() {
         deviceList.innerHTML = ''; // empties the list
         // scan for all devices
-        debugger;
         ble.scan([], 5, app.onDiscoverDevice, app.onError);
     },
     onDiscoverDevice: function(device) {
 
         debugger;
+        var ad = parseAdvertisingData(arrayBufferToIntArray(device.advertising));
         console.log(JSON.stringify(device));
         var listItem = document.createElement('li'),
             html = '<b>' + device.name + '</b><br/>' +
