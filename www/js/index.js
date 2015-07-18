@@ -86,7 +86,12 @@ var app = {
     onDiscoverDevice: function(device) {
 
         debugger;
-        var ad = parseAdvertisingData(arrayBufferToIntArray(device.advertising));
+        var adData = new Uint8Array(device.advertising);
+        var hexData = [];
+        for (var i=0; i<adData.length; i++) {
+            hexData.push(adData[i].toString(16))
+        }
+        //[2, 1, 26, 26, 255, 76, 0, 2, 21, 226, 197, 109, 181, 223, 251, 72, 210, 176, 96, 208, 245, 167, 16, 150, 224, 0, 0, 0, 0, 197, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         console.log(JSON.stringify(device));
         var listItem = document.createElement('li'),
             html = '<b>' + device.name + '</b><br/>' +
