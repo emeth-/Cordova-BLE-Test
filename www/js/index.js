@@ -41,10 +41,12 @@ var app = {
     refreshDeviceList: function() {
         deviceList.innerHTML = ''; // empties the list
         // scan for all devices
+        debugger;
         ble.scan([], 5, app.onDiscoverDevice, app.onError);
     },
     onDiscoverDevice: function(device) {
 
+        debugger;
         console.log(JSON.stringify(device));
         var listItem = document.createElement('li'),
             html = '<b>' + device.name + '</b><br/>' +
